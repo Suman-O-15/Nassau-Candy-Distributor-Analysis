@@ -9,7 +9,9 @@ st.set_page_config(page_title="Nassau Candy Distributor", layout="wide")
 # Load data
 @st.cache_data
 def load_data():
-    df = pd.read_csv("../data/Nassau Candy Distributor.csv")
+    import os
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    df = pd.read_csv(os.path.join(BASE_DIR, "data", "Nassau_Candy_Distributor.csv"))
     df['Order Date'] = pd.to_datetime(df['Order Date'], dayfirst=True)
     df['Ship Date'] = pd.to_datetime(df['Ship Date'], dayfirst=True)
     df['Lead Time'] = (df['Ship Date'] - df['Order Date']).dt.days
