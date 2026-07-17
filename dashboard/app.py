@@ -8,10 +8,28 @@ st.set_page_config(page_title="Nassau Candy Distributor", layout="wide")
 
 # Load data
 @st.cache_data
+@st.cache_data
 def load_data():
-    import os
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    df = pd.read_csv(os.path.join(BASE_DIR, "data", "Nassau_Candy_Distributor.csv"))
+    # Works both locally and on Streamlit Cloud
+    possible_paths = [
+        "../data/Nassau_Candy_Distributor.csv",
+        "data/Nassau_Candy_Distributor.csv",
+        "../data/Nassau Candy Distributor.csv",
+        "data/Nassau Candy Distributor.csv",
+    ]
+    
+    df = None
+    for path in possible_paths:
+        try:
+            df = pd.read_csv(path)
+            break
+        except:
+            continue
+    
+    if df is None:
+        st.error("Dataset not found!")
+        st.stop()
+
     df['Order Date'] = pd.to_datetime(df['Order Date'], dayfirst=True)
     df['Ship Date'] = pd.to_datetime(df['Ship Date'], dayfirst=True)
     df['Lead Time'] = (df['Ship Date'] - df['Order Date']).dt.days
